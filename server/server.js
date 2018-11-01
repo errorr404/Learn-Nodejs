@@ -4,8 +4,10 @@ var {ObjectID} = require('mongodb');
 const _ = require('lodash');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
+var {User} = require('./models/user');
 
 var app = express();
+
 app.use(bodyParser.json()); // middleware
 
 // creare Todo---
@@ -87,6 +89,19 @@ app.patch('/todos/:id',(req,res)=>{
   })
 
 });
+
+//POST /Users
+
+app.post('/register',(req,res)=>{
+    var body = _.pick(req.body,['email','password']);
+    // console.log(body);
+    var user = new User(body);
+    user.save().then((data)=>{
+        res.send(data);
+    }).catch((e)=>{
+      res.status(400).send();
+    })
+})
 
 app.listen(3000,()=>{
   console.log('Started on port 3000');
