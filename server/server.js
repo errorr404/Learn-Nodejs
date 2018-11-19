@@ -92,16 +92,19 @@ app.patch('/todos/:id',(req,res)=>{
 
 //POST /Users
 
-app.post('/register',(req,res)=>{
+app.post('/users',(req,res)=>{
     var body = _.pick(req.body,['email','password']);
     // console.log(body);
     var user = new User(body);
-    user.save().then((data)=>{
-        res.send(data);
+    user.save().then(()=>{
+      return user.generateAuthToken();
+    }).then((token)=>{
+      console.log('token in /users---',token);
+        res.header('x-auth',token).send(user);
     }).catch((e)=>{
       res.status(400).send();
     })
-})
+});
 
 app.listen(3000,()=>{
   console.log('Started on port 3000');
