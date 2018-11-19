@@ -5,6 +5,7 @@ const _ = require('lodash');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate}= require('./middleware/authenticate');
 
 var app = express();
 
@@ -101,9 +102,27 @@ app.post('/users',(req,res)=>{
     }).then((token)=>{
       console.log('token in /users---',token);
         res.header('x-auth',token).send(user);
+        console.log('after header send...')
     }).catch((e)=>{
       res.status(400).send();
     })
+});
+
+
+
+app.get('/users/me',authenticate,(req,res)=>{
+  // var token = req.header('x-auth');
+
+  // User.findByToken(token).then((user)=>{
+  //   if(!user){
+  //     return Promise.reject();
+  //   }
+  //   res.send(user);
+  // }).catch((e)=>{
+  //   res.status(401).send();
+  // })
+  console.log(req.user);
+  res.send(req.user);
 });
 
 app.listen(3000,()=>{
